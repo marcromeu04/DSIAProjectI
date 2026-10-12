@@ -11,3 +11,4 @@ data/borme/
 .DS_Store
 .vscode/
 .idea/
+data/ventas_limpias*.csv
