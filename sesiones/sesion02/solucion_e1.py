@@ -61,7 +61,7 @@ def exportar(validos: pd.DataFrame, errores: pd.DataFrame, carpeta: Path) -> Non
         "filas_totales": int(len(validos) + len(errores)),
         "filas_validas": int(len(validos)),
         "filas_invalidas": int(len(errores)),
-        "importe_total": float(validos["importe"].sum()),
+        "importe_total":round(float(validos["importe"].sum())),
     }
     (carpeta / "calidad_datos.json").write_text(json.dumps(calidad, indent=2), encoding="utf-8")
 
