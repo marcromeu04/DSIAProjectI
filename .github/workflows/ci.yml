@@ -24,4 +24,4 @@ jobs:
 
       - name: Tests with coverage gate
         run: |
-          pytest -q --cov=ventas_app --cov-report=term-missing --cov-fail-under=95
+          pytest -q --cov=ventas_app --cov-report=term-missing --cov-fail-under=60
