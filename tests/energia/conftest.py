@@ -44,3 +44,8 @@ def prices_csv(tmp_path):
 @pytest.fixture
 def real_invoices_csv():
     return ROOT / "data" / "raw" / "facturas_luz.csv"
+
+
+@pytest.fixture
+def real_prices_csv():
+    return ROOT / "data" / "raw" / "precios_pvpc.csv"

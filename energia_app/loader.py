@@ -1,4 +1,8 @@
-"""Carga de facturas de luz."""
+"""Carga de datos: facturas de luz y precios PVPC.
+
+Es el único módulo que lee de disco. Comprueba que el fichero existe, que no
+está vacío y que trae las columnas del contrato; si no, lanza DataLoadError.
+"""
 
 from __future__ import annotations
 
@@ -8,6 +12,7 @@ import pandas as pd
 
 from energia_app.exceptions import DataLoadError
 
+# Contrato de columnas: lo que el resto del pipeline espera recibir
 REQUIRED_COLUMNS: tuple[str, ...] = (
     "id_factura", "sector", "provincia", "tarifa", "fecha_inicio", "fecha_fin",
     "potencia_contratada_kw", "potencia_maxima_kw", "consumo_kwh",
@@ -28,7 +33,6 @@ def load_invoices(path: Path | str) -> pd.DataFrame:
     if missing:
         raise DataLoadError(f"Faltan columnas obligatorias: {missing}")
     return frame
-
 
 
 PRICE_COLUMNS: tuple[str, ...] = ("fecha_hora", "precio_eur_mwh")

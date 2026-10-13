@@ -40,8 +40,8 @@ def test_faltan_columnas(invoices_frame):
 
 
 @pytest.mark.integration
-def test_facturas_reales_180_y_20(real_invoices_csv):
+def test_facturas_reales_9000_y_1000(real_invoices_csv):
     result = validate_invoices(load_invoices(real_invoices_csv))
 
-    assert (result.n_valid, result.n_invalid) == (180, 20)
+    assert (result.n_valid, result.n_invalid) == (9000, 1000)
 

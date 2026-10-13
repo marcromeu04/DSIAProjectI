@@ -59,7 +59,7 @@ def _estropear(fila: dict, tipo: int) -> dict:
     return fila
 
 
-def generar(n: int = 200, invalidas: int = 20, seed: int = 42) -> pd.DataFrame:
+def generar(n: int = 10_000, invalidas: int = 1_000, seed: int = 42) -> pd.DataFrame:
     rng = random.Random(seed)
     filas = [_factura(i + 1, rng) for i in range(n)]
     # Estropeamos un número exacto de filas, repartidas entre los 5 tipos
@@ -70,8 +70,8 @@ def generar(n: int = 200, invalidas: int = 20, seed: int = 42) -> pd.DataFrame:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--n", type=int, default=200)
-    parser.add_argument("--invalidas", type=int, default=20)
+    parser.add_argument("--n", type=int, default=10_000)
+    parser.add_argument("--invalidas", type=int, default=1_000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--salida", default="data/raw/facturas_luz.csv")
     args = parser.parse_args()
