@@ -1,0 +1,8 @@
+{
+  "fuente": "https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real",
+  "serie": "PVPC",
+  "inicio": "2025-01-01",
+  "fin": "2026-10-12",
+  "filas": 15599,
+  "descargado": "2026-10-13T17:43:20"
+}
