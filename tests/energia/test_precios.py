@@ -25,7 +25,7 @@ def test_precios_validos_pasan_todos(prices_frame):
 
 @pytest.mark.parametrize(
     "valor, motivo",
-    [(None, "precio nulo"), (-5.0, "precio <= 0"), (5000.0, "precio fuera de rango")],
+    [(None, "precio nulo"), (-5000.0, "precio fuera de rango"), (5000.0, "precio fuera de rango")],
 )
 def test_reglas_de_precio(prices_frame, valor, motivo):
     prices_frame.loc[0, "precio_eur_mwh"] = valor
@@ -33,6 +33,13 @@ def test_reglas_de_precio(prices_frame, valor, motivo):
     result = validate_prices(prices_frame)
 
     assert result.invalid["motivo"].iloc[0] == motivo
+
+
+def test_precio_negativo_real_es_valido(prices_frame):
+    # Pasa de verdad: en septiembre de 2026 hubo horas a -10 EUR/MWh a mediodía
+    prices_frame.loc[0, "precio_eur_mwh"] = -10.7
+
+    assert validate_prices(prices_frame).n_invalid == 0
 
 
 def test_hora_duplicada_se_marca_una_vez(prices_frame):

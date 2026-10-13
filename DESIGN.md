@@ -30,6 +30,10 @@ el rango (`tramos_mensuales`) es una función pura y se testea sin red.
 **Fechas y zona horaria:** los precios llegan con `+01:00` o `+02:00` según la época del año. Se convierten a
 UTC para validar (detectar duplicados reales) y a `Europe/Madrid` para medir por hora del día.
 
+**Una regla corregida con datos reales:** la primera versión rechazaba precios ≤ 0 y marcó 34 horas
+reales de septiembre de 2026 como inválidas (mediodías con excedente solar). Se cambió la regla a un rango
+plausible (-500 a 1.000 EUR/MWh) y se añadió un test con un precio negativo real.
+
 **Cálculo en código, no en un modelo:** las métricas de ahorro son funciones deterministas con constantes con
 nombre (`MARGEN_POTENCIA`, `REACTIVA_LIMITE`, `EUR_KW_DIA`, `MAX_PRICE_EUR_MWH`). Cada cifra se puede
 reproducir a mano, y los tests lo hacen.

@@ -74,7 +74,9 @@ número de horas de precio válidas, precio medio, diferencia pico-valle y las t
 - **Facturas:** potencia contratada ≥ 15 kW; maxímetro, consumo y reactiva no negativos; importe positivo;
   fechas válidas y periodo de al menos un día; tarifa 3.0TD o 6.1TD.
 - **Precios:** fecha válida; sin horas duplicadas (comparadas en UTC para no confundir el cambio de hora);
-  precio presente, mayor que 0 y no superior a 1.000 EUR/MWh.
+  precio presente y entre -500 y 1.000 EUR/MWh. Los precios negativos se aceptan porque son reales:
+  en la descarga hay horas de mediodía con precio negativo (por ejemplo, el 5 y 6 de septiembre de 2026),
+  cuando sobra producción solar.
 
 ### Métricas
 

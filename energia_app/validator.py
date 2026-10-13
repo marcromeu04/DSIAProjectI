@@ -86,12 +86,15 @@ def validate_invoices(frame: pd.DataFrame) -> ValidationResult:
     return ValidationResult(valid=valid, invalid=invalid)
 
 
-MAX_PRICE_EUR_MWH = 1000  # por encima es casi seguro un error de la fuente
+# Rango plausible del precio. Puede ser negativo: con mucha solar a mediodía
+# el mercado llega a pagar por consumir. Fuera de este rango, error de la fuente.
+MIN_PRICE_EUR_MWH = -500
+MAX_PRICE_EUR_MWH = 1000
 
 
 def _price_reasons(frame: pd.DataFrame) -> pd.Series:
     """Motivo por hora de precio; cadena vacía si la fila es válida."""
-    fecha = pd.to_datetime(frame["fecha_hora"], utc=True, errors="coerce")
+    fecha = pd.to_datetime(frame["fecha_hora"], format="ISO8601", utc=True, errors="coerce")
     precio = pd.to_numeric(frame["precio_eur_mwh"], errors="coerce")
 
     rules: list[tuple[pd.Series, str]] = [
@@ -100,8 +103,7 @@ def _price_reasons(frame: pd.DataFrame) -> pd.Series:
         # se repiten, pero en UTC son dos horas distintas y ambas son reales
         (fecha.duplicated(keep="first") & fecha.notna(), "hora duplicada"),
         (precio.isna(), "precio nulo"),
-        (precio <= 0, "precio <= 0"),
-        (precio > MAX_PRICE_EUR_MWH, "precio fuera de rango"),
+        ((precio < MIN_PRICE_EUR_MWH) | (precio > MAX_PRICE_EUR_MWH), "precio fuera de rango"),
     ]
     # Mismo mecanismo que en facturas: un motivo por regla incumplida
     reasons = pd.Series("", index=frame.index, dtype="object")
