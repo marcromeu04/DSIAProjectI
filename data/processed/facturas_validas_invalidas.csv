@@ -1,0 +1,21 @@
+id_factura,sector,provincia,tarifa,fecha_inicio,fecha_fin,potencia_contratada_kw,potencia_maxima_kw,consumo_kwh,reactiva_kvarh,importe_total_eur,motivo
+F0011,nave,Barcelona,3.0TD,2026-02-24,2026-02-24,47,29.0,5087,1050,814.17,periodo sin dias
+F0015,taller,Sevilla,2.0TD,2026-06-24,2026-07-25,33,30.2,3146,416,512.05,tarifa desconocida
+F0020,taller,Zaragoza,3.0TD,2026-06-18,2026-07-18,51,22.0,2713,741,,importe nulo o <= 0
+F0043,nave,Valencia,3.0TD,2026-05-20,2026-06-17,39,29.9,-2171,124,380.24,consumo negativo o nulo
+F0071,hosteleria,Valencia,3.0TD,2026-04-27,2026-04-27,37,33.6,3545,1200,575.21,periodo sin dias
+F0076,nave,Bilbao,3.0TD,2026-01-20,2026-01-20,60,57.9,5333,1673,876.82,periodo sin dias
+F0079,instalador,Sevilla,6.1TD,2026-04-22,2026-05-20,49,52.5,-4529,1647,736.07,consumo negativo o nulo
+F0090,nave,Sevilla,3.0TD,2026-05-27,2026-06-26,10,31.4,3168,1376,553.34,potencia contratada < 15 kW o nula
+F0091,taller,Barcelona,2.0TD,2026-07-30,2026-08-27,41,28.4,3426,1058,560.0,tarifa desconocida
+F0110,instalador,Valencia,3.0TD,2026-08-10,2026-08-10,33,30.3,4596,703,708.12,periodo sin dias
+F0112,taller,Bilbao,3.0TD,2026-03-30,2026-04-29,10,46.4,4884,2050,808.39,potencia contratada < 15 kW o nula
+F0114,instalador,Zaragoza,6.1TD,2026-04-09,2026-05-10,57,61.8,7627,127,,importe nulo o <= 0
+F0115,taller,Sevilla,2.0TD,2026-08-11,2026-09-08,44,16.7,2638,18,455.56,tarifa desconocida
+F0155,instalador,Zaragoza,3.0TD,2026-04-07,2026-05-07,45,25.8,2694,875,,importe nulo o <= 0
+F0158,taller,Sevilla,3.0TD,2026-03-14,2026-04-14,59,45.7,5819,808,,importe nulo o <= 0
+F0164,carpinteria,Zaragoza,3.0TD,2026-04-12,2026-05-12,37,17.7,-2718,93,458.08,consumo negativo o nulo
+F0170,carpinteria,Sevilla,3.0TD,2026-06-07,2026-07-08,10,29.2,3912,1680,667.4,potencia contratada < 15 kW o nula
+F0177,hosteleria,Barcelona,2.0TD,2026-05-11,2026-06-10,17,10.0,816,79,149.94,tarifa desconocida
+F0184,hosteleria,Madrid,3.0TD,2026-03-14,2026-04-11,10,13.5,2125,141,348.46,potencia contratada < 15 kW o nula
+F0187,hosteleria,Zaragoza,3.0TD,2026-01-10,2026-02-09,46,39.4,-3021,959,519.4,consumo negativo o nulo
