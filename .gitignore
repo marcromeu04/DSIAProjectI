@@ -12,3 +12,5 @@ data/borme/
 .vscode/
 .idea/
 data/ventas_limpias*.csv
+data/processed/
+data/processed/
