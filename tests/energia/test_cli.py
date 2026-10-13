@@ -36,5 +36,12 @@ def test_main_devuelve_0_y_escribe_informe(invoices_csv, capsys):
 def test_pipeline_completo_sobre_datos_reales(real_invoices_csv):
     resumen = run(real_invoices_csv)
 
-    assert resumen["n_valid"] == 180
+    assert resumen["n_valid"] == 9000
     assert resumen["total_savings"] > 0
+
+
+def test_main_con_precios_muestra_horas_caras(invoices_csv, prices_csv, capsys):
+    codigo = main(["--input", str(invoices_csv), "--prices", str(prices_csv)])
+
+    assert codigo == 0
+    assert "Horas mas caras" in capsys.readouterr().out
