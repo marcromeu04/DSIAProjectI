@@ -1,0 +1,58 @@
+# Configuración del entrenamiento del modelo de precio (Proyecto II)
+#
+# Todo lo que se puede querer cambiar entre dos entrenamientos vive aquí, no en el código:
+# qué datos, qué features, cómo se valida, qué modelos se prueban y con qué hiperparámetros.
+# energia_app/config.py lo lee y lo valida antes de entrenar.
+
+data:
+  prices_path: data/raw/precios_pvpc.csv
+  timezone: Europe/Madrid            # las features de calendario se calculan en hora local
+  target: precio_eur_mwh
+
+# Bloques de features. Cada nombre corresponde a una clase registrada en energia_app/features.py;
+# añadir un bloque nuevo es añadir una entrada aquí, sin tocar el entrenamiento.
+# Regla: solo información disponible al hacer la previsión (el día anterior), para no hacer trampa.
+features:
+  - name: calendar                   # hora, día de la semana y mes, en seno/coseno y en enteros
+    params: {}
+  - name: holidays                   # festivos nacionales
+    params: {country: ES}
+  - name: lags                       # precio de la misma hora hace N horas
+    params: {hours: [24, 48, 168]}
+  - name: rolling                    # media y desviación de las últimas N horas, vistas desde ayer
+    params: {windows_hours: [24, 168], shift_hours: 24}
+
+validation:
+  test_days: 30                      # los últimos 30 días se reservan y no se tocan hasta el final
+  cv_splits: 5                       # validación cruzada temporal sobre el resto
+  cv_gap_hours: 24                   # hueco entre entrenamiento y validación en cada fold
+
+search:
+  method: random                     # random (muestrea combinaciones) o grid (las prueba todas)
+  n_iter: 20                         # combinaciones por modelo en modo random
+  scoring: neg_mean_absolute_error   # error medio en EUR/MWh (sklearn lo maximiza, por eso va en negativo)
+  random_state: 42
+
+# Modelos candidatos y su espacio de búsqueda. Cada "estimator" es un nombre registrado en
+# energia_app/estimators.py. Gana el de menor error en validación cruzada.
+candidates:
+  - name: ridge
+    estimator: ridge
+    param_space:
+      alpha: [0.1, 1.0, 10.0, 100.0, 1000.0]
+  - name: gradient_boosting
+    estimator: hist_gradient_boosting
+    param_space:
+      learning_rate: [0.02, 0.05, 0.1]
+      max_iter: [200, 400, 800]
+      max_leaf_nodes: [15, 31, 63]
+      min_samples_leaf: [20, 50, 100]
+      l2_regularization: [0.0, 0.1, 1.0]
+
+# Referencias contra las que se compara el modelo en el conjunto de test
+baselines: [naive_24h, naive_168h]
+
+artifacts:
+  model_path: models/modelo_precio.joblib
+  metrics_path: models/metricas.json
+  cv_results_path: models/cv_results.csv

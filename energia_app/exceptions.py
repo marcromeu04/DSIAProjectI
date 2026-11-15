@@ -7,3 +7,7 @@ class DataLoadError(Exception):
 
 class ValidationError(Exception):
     """La entrada no cumple el contrato de columnas."""
+
+
+class ConfigError(ValueError):
+    """params.yaml falta o no tiene la forma esperada."""
