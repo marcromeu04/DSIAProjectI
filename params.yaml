@@ -48,6 +48,13 @@ candidates:
       max_leaf_nodes: [15, 31, 63]
       min_samples_leaf: [20, 50, 100]
       l2_regularization: [0.0, 0.1, 1.0]
+  - name: random_forest              # añadido sin tocar código: solo esta entrada
+    estimator: random_forest
+    param_space:
+      n_estimators: [200]
+      max_depth: [12, 20]
+      min_samples_leaf: [5, 20]
+      max_features: [0.5]
 
 # Referencias contra las que se compara el modelo en el conjunto de test
 baselines: [naive_24h, naive_168h]
