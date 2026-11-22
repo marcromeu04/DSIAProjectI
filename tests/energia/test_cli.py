@@ -76,3 +76,19 @@ def test_main_con_modelo_muestra_las_mejores_horas(tmp_path, invoices_csv, capsy
 def test_main_con_modelo_inexistente_devuelve_1(invoices_csv, prices_csv, tmp_path):
     assert main(["--input", str(invoices_csv), "--prices", str(prices_csv),
                  "--model", str(tmp_path / "nada.joblib")]) == 1
+
+
+def test_main_explica_una_factura_en_mock(invoices_csv, capsys, monkeypatch):
+    monkeypatch.setenv("AI_MODE", "mock")
+
+    codigo = main(["--input", str(invoices_csv), "--explain", "F1"])
+
+    salida = capsys.readouterr().out
+    assert codigo == 0
+    assert "Explicacion (mock" in salida and "31.50 EUR" in salida
+
+
+def test_main_explicar_factura_inexistente_devuelve_1(invoices_csv, monkeypatch):
+    monkeypatch.setenv("AI_MODE", "mock")
+
+    assert main(["--input", str(invoices_csv), "--explain", "F999"]) == 1
