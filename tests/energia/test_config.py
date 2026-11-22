@@ -23,7 +23,7 @@ def test_el_params_yaml_del_repo_es_valido():
     assert config.data.target == "precio_eur_mwh"
     assert [f.name for f in config.features] == ["calendar", "holidays", "lags", "rolling"]
     assert config.validation.cv_splits == 5
-    assert {c.name for c in config.candidates} == {"ridge", "gradient_boosting"}
+    assert {c.name for c in config.candidates} == {"ridge", "gradient_boosting", "random_forest"}
 
 
 def test_la_configuracion_es_inmutable(raw):
