@@ -8,8 +8,10 @@ import sys
 from pathlib import Path
 
 from energia_app import metrics
-from energia_app.exceptions import DataLoadError, ValidationError
+from energia_app.exceptions import ConfigError, DataLoadError, FeatureError, ValidationError
+from energia_app.features.builder import price_series
 from energia_app.loader import load_invoices, load_prices
+from energia_app.modeling.bundle import ModelBundle
 from energia_app.validator import validate_invoices, validate_prices
 
 logger = logging.getLogger("energia_app")
@@ -21,10 +23,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--input", type=Path, required=True, help="CSV de facturas")
     parser.add_argument("--prices", type=Path, default=None, help="CSV de precios PVPC")
     parser.add_argument("--output", type=Path, default=None, help="CSV de filas válidas")
+    parser.add_argument("--model", type=Path, default=None,
+                        help="Modelo entrenado (.joblib); con --prices predice el precio de cada hora de mañana")
     return parser.parse_args(argv)
 
 
-def run(input_path: Path, prices_path: Path | None = None, output_path: Path | None = None) -> dict:
+def run(input_path: Path, prices_path: Path | None = None, output_path: Path | None = None,
+        model_path: Path | None = None) -> dict:
     """Ejecuta el pipeline completo y devuelve un resumen (sin imprimir nada).
 
     Separarlo de main() permite testear el resultado sin pasar por la terminal.
@@ -50,6 +55,12 @@ def run(input_path: Path, prices_path: Path | None = None, output_path: Path | N
         summary["pvpc_avg"] = metrics.average_pvpc_price(prices.valid)
         summary["pvpc_spread"] = metrics.peak_valley_spread(prices.valid)
         summary["pvpc_by_hour"] = metrics.price_by_hour(prices.valid)
+        # Inferencia integrada en el pipeline: el modelo guardado predice cada hora de mañana
+        if model_path is not None:
+            bundle = ModelBundle.load(model_path)
+            summary["forecast"] = bundle.predict_next_day(price_series(prices.valid, bundle.target))
+            logger.info("prevision de %d horas con el modelo %s", len(summary["forecast"]),
+                        bundle.metadata.get("ganador", "?"))
     # Las inválidas se guardan aparte con su motivo para poder revisarlas
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -63,8 +74,8 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     args = parse_args(argv)
     try:
-        s = run(args.input, args.prices, args.output)
-    except (DataLoadError, ValidationError) as exc:
+        s = run(args.input, args.prices, args.output, args.model)
+    except (DataLoadError, ValidationError, ConfigError, FeatureError, FileNotFoundError) as exc:
         # Error esperado (fichero mal): mensaje claro y código 1, sin traza larga
         logger.error("%s", exc)
         return 1
@@ -78,6 +89,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Diferencia hora cara - hora barata: {s['pvpc_spread']:.2f} EUR/MWh")
         caras = s["pvpc_by_hour"].nlargest(3, "precio_eur_mwh")
         print("Horas mas caras:\n", caras.to_string(index=False))
+    if s.get("forecast") is not None:
+        prevision = s["forecast"]
+        print(f"\nPrevision para {prevision['fecha_hora'].iloc[0].date()}: "
+              f"media {prevision['precio_previsto_eur_mwh'].mean():.2f} EUR/MWh")
+        print("Mejores horas para consumir:")
+        for _, fila in prevision.nsmallest(3, "precio_previsto_eur_mwh").iterrows():
+            print(f"  {fila['fecha_hora']:%H:%M}  {fila['precio_previsto_eur_mwh']:.2f} EUR/MWh")
     print("\nPor sector:\n", s["by_sector"].to_string(index=False))
     return 0
 
