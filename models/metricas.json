@@ -1,0 +1,55 @@
+{
+  "ganador": "random_forest",
+  "hiperparametros": {
+    "max_depth": 20,
+    "max_features": 0.5,
+    "min_samples_leaf": 20,
+    "n_estimators": 200
+  },
+  "cv_mae_por_candidato": {
+    "ridge": 21.632,
+    "gradient_boosting": 19.54,
+    "random_forest": 18.799
+  },
+  "test": {
+    "modelo": {
+      "mae": 28.789,
+      "rmse": 39.827,
+      "bias": -0.042
+    },
+    "naive_24h": {
+      "mae": 37.547,
+      "rmse": 55.666,
+      "bias": -0.839
+    },
+    "naive_168h": {
+      "mae": 34.932,
+      "rmse": 48.405,
+      "bias": 0.518
+    }
+  },
+  "horas_entreno": 14711,
+  "horas_test": 720,
+  "features": [
+    "hour",
+    "hour_sin",
+    "hour_cos",
+    "dow",
+    "dow_sin",
+    "dow_cos",
+    "month",
+    "month_sin",
+    "month_cos",
+    "is_weekend",
+    "is_holiday",
+    "lag_24h",
+    "lag_48h",
+    "lag_168h",
+    "roll_mean_24h",
+    "roll_std_24h",
+    "roll_mean_168h",
+    "roll_std_168h"
+  ],
+  "entrenado": "2026-11-24T00:23:19+00:00",
+  "mejora_mae_vs_mejor_baseline_pct": 17.6
+}
