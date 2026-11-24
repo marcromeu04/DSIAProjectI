@@ -44,3 +44,29 @@ reproducir a mano, y los tests lo hacen.
 - Se usa una sola potencia contratada; una tarifa 3.0TD real tiene seis periodos.
 - Los precios PVPC de REE tienen licencia de uso informativo y no comercial; un uso comercial necesita
   autorización de REE o una fuente con licencia abierta.
+
+## Proyecto II — modelo de precio
+
+| Principio | Dónde | Cómo se cumple |
+| --- | --- | --- |
+| S | `config.py`, `features/*.py`, `modeling/*.py`, `train.py` | Cada módulo tiene un motivo de cambio: leer la configuración, calcular un grupo de features, crear estimadores, separar datos, buscar hiperparámetros, medir, guardar el artefacto u orquestar. |
+| O | `features/registry.py`, `modeling/estimators.py` | Un bloque de features o un modelo nuevo es una clase registrada y una entrada en `params.yaml`. El random forest se añadió así, sin tocar código. |
+| L | `features/base.py` (`FeatureBlock.transform`), `modeling/baselines.py` | Todos los bloques cumplen el mismo contrato, que la plantilla comprueba (índice, columnas, UTC). Los baselines son estimadores de sklearn y se evalúan con el mismo código que los modelos. |
+| I | `FeatureBlock` | Un único método público. Un bloque no sabe entrenar ni guardar nada. |
+| D | `train.train`, `FeatureBuilder` | El entrenamiento recibe la configuración y construye las piezas por nombre; no importa ninguna feature ni ningún modelo concreto. |
+
+**Patrones:** Parameter Object y Value Object (configuración tipada e inmutable), Template Method
+(`FeatureBlock.transform`), Registry + Factory (bloques y estimadores por nombre), Strategy (bloques,
+estimadores, baselines y método de búsqueda intercambiables), Adapter (festivos sobre la librería
+`holidays`, cliente de IA sobre `huggingface_hub`), Composite (`FeatureBuilder` es un bloque hecho de
+bloques) y Facade (`python -m energia_app.train`).
+
+**Decisiones de validación:** split temporal y validación cruzada con hueco, porque un KFold aleatorio
+entrenaría con el futuro para predecir el pasado. El test solo se mira una vez, después de elegir.
+
+**Riesgo de fuga de información:** ninguna feature puede usar datos posteriores a 24 h antes del instante.
+Lo impide `LagFeatures` (rechaza retardos menores) y lo comprueba un test sobre cada bloque y sobre el
+builder completo.
+
+**Limitaciones:** el test incluye un festivo y una semana atípica; con tan pocos festivos en el histórico,
+la feature `is_holiday` aporta poco. El modelo se reentrena a mano; automatizarlo es trabajo del Proyecto III.
